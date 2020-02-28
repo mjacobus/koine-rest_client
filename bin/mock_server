@@ -1,0 +1,25 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require 'rack'
+require 'json'
+
+app = proc do |env|
+  request = Rack::Request.new(env)
+  headers = {}
+  request.each_header do |name, value|
+    unless name.match('rack.')
+      headers[name] = value
+    end
+  end
+  response = {
+    path: request.path,
+    method: request.request_method,
+    params: request.params,
+    request_headers: headers
+  }
+  code = request.params['response_code'] || 200
+  [code, { 'Content-Type' => 'application/json' }, [response.to_json]]
+end
+
+Rack::Handler.default.run app, Port: 4321

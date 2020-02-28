@@ -1,0 +1,44 @@
+require:
+  - rubocop-performance
+  - rubocop-rspec
+
+Metrics/BlockLength:
+  Exclude:
+    - 'spec/**/*'
+    - '*.gemspec'
+
+Metrics/LineLength:
+  Max: 100
+  Exclude:
+    - '*.gemspec'
+
+Style/GuardClause:
+  Enabled: false
+
+Style/IfUnlessModifier:
+  Enabled: false
+
+Layout/MultilineMethodCallIndentation:
+  EnforcedStyle: indented
+
+Layout/MultilineOperationIndentation:
+  Enabled: true
+  EnforcedStyle: indented
+
+Naming/RescuedExceptionsVariableName:
+  PreferredName: 'exception'
+
+RSpec/ExampleLength:
+  Max: 10
+  Exclude:
+    - spec/upsell/rest_client/rspec_mock_client_spec.rb
+
+RSpec/MultipleExpectations:
+  Enabled: false
+
+RSpec/NestedGroups:
+  Exclude:
+    - spec/upsell/rest_client/async_builder_spec.rb
+
+# AllCops:
+#   Exclude:
