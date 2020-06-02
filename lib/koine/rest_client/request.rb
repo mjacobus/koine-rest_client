@@ -77,7 +77,6 @@ module Koine
       attr_writer :path
       attr_writer :query_params
       attr_writer :headers
-      attr_writer :body
 
       # :reek:FeatureEnvy
       def new(attribute, value)
@@ -86,6 +85,22 @@ module Koine
           object.freeze
         end
       end
+
+      def body=(body)
+        if json_request? && body.is_a?(Hash)
+          body = JSON.dump(body)
+        end
+
+        @body = body
+      end
+
+      # rubocop:disable Performance/Casecmp
+      def json_request?
+        headers.find do |key, value|
+          key.downcase == 'content-type' && value.downcase.match('application/json')
+        end
+      end
+      # rubocop:enable Performance/Casecmp
     end
   end
 end

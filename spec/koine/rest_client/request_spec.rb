@@ -37,6 +37,20 @@ RSpec.describe Koine::RestClient::Request do
     assert_attribute(new_request, :body, 'the-body')
   end
 
+  it 'does not convert to json when content type is not json' do
+    new_request = request.with_body(foo: :bar)
+
+    assert_attribute(new_request, :body, { foo: :bar })
+  end
+
+  it 'body gets converted to json when content type is json' do
+    new_request = request
+      .with_added_headers('Content-Type' => 'application/json; charset=UTF-8')
+      .with_body(foo: :bar)
+
+    assert_attribute(new_request, :body, '{"foo":"bar"}')
+  end
+
   it 'mutates path' do
     new_request = request.with_path('the-path')
 
