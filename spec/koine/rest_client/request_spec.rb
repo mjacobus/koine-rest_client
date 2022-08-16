@@ -3,7 +3,7 @@
 require 'spec_helper'
 
 RSpec.describe Koine::RestClient::Request do
-  subject(:request) { described_class.new(arguments) }
+  subject(:request) { described_class.new(**arguments) }
 
   let(:arguments) do
     {
