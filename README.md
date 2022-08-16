@@ -1,5 +1,9 @@
 # Koine::RestClient
 
+[![RSpec](https://github.com/mjacobus/koine-rest_client/actions/workflows/rspec.yml/badge.svg)](https://github.com/mjacobus/koine-rest_client/actions/workflows/rspec.yml)
+[![Coverage Status](https://coveralls.io/repos/github/mjacobus/koine-rest_client/badge.svg?branch=master)](https://coveralls.io/github/mjacobus/koine-rest_client?branch=master)
+[![Maintainability](https://api.codeclimate.com/v1/badges/8b7bf0a115757ca74d9a/maintainability)](https://codeclimate.com/github/mjacobus/koine-rest_client/maintainability)
+
 Another http client with async
 
 ## Installation
