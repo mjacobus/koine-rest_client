@@ -10,5 +10,10 @@ module Koine
         @response = response
       end
     end
+
+    BadRequestError = Class.new(Error)
+    NotFoundError = Class.new(Error)
+    UnauthorizedError = Class.new(Error)
+    InternalServerError = Class.new(Error)
   end
 end
