@@ -9,6 +9,10 @@ module Koine
       def initialize(response)
         @response = response
       end
+
+      def message
+        @message ||= @response&.body
+      end
     end
 
     # 400
