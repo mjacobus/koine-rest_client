@@ -50,6 +50,14 @@ RSpec.describe Koine::RestClient::ResponseParser do
     end
   end
 
+  context 'when response is 401' do
+    let(:code) { 401 }
+
+    it 'raises a unauthorized' do
+      expect { parsed }.to raise_error(Koine::RestClient::UnauthorizedError)
+    end
+  end
+
   context 'when response is 404' do
     let(:code) { 404 }
 

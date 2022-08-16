@@ -23,6 +23,7 @@ module Koine
       def error_for_code(code)
         {
           400 => BadRequestError,
+          401 => UnauthorizedError,
           404 => NotFoundError,
           500 => InternalServerError
         }.fetch(code) { Error }
