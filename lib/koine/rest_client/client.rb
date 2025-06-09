@@ -9,12 +9,12 @@ module Koine
         adapter: Adapters::HttpPartyAdapter.new,
         response_parser: ResponseParser.new,
         base_request: Request.new,
-        logger: RestClient.logger
+        request_response_logger: RestClient.request_response_logger
       )
         @adapter = adapter
         @response_parser = response_parser
         @request = base_request
-        @logger = logger
+        @logger = request_response_logger
       end
 
       def get(path, query = {}, options = {}, &block)
