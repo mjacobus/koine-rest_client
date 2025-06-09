@@ -5,12 +5,7 @@ module Koine
     # request object
     # :reek:TooManyInstanceVariables
     class Request
-      attr_reader :method
-      attr_reader :base_url
-      attr_reader :path
-      attr_reader :headers
-      attr_reader :query_params
-      attr_reader :body
+      attr_reader :method, :base_url, :path, :headers, :query_params, :body
 
       def initialize(base_url: '', query_params: {}, path: '', headers: {}, method: 'get')
         @method = method
@@ -70,13 +65,13 @@ module Koine
         object
       end
 
+      def debug_info
+        { type: self.class, method: method, url: url, body: body, headers: headers }
+      end
+
       private
 
-      attr_writer :method
-      attr_writer :base_url
-      attr_writer :path
-      attr_writer :query_params
-      attr_writer :headers
+      attr_writer :method, :base_url, :path, :query_params, :headers
 
       # :reek:FeatureEnvy
       def new(attribute, value)
@@ -94,7 +89,6 @@ module Koine
         @body = body
       end
 
-      # rubocop:disable Performance/Casecmp
       def json_request?
         headers.find do |key, value|
           key.downcase == 'content-type' && value.downcase.match('application/json')

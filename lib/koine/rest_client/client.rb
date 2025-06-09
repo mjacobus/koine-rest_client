@@ -8,11 +8,13 @@ module Koine
       def initialize(
         adapter: Adapters::HttpPartyAdapter.new,
         response_parser: ResponseParser.new,
-        base_request: Request.new
+        base_request: Request.new,
+        logger: RestClient.logger
       )
         @adapter = adapter
         @response_parser = response_parser
         @request = base_request
+        @logger = logger
       end
 
       def get(path, query = {}, options = {}, &block)
@@ -72,6 +74,7 @@ module Koine
       end
 
       def perform_request(request)
+        @logger.log_request(request)
         @adapter.send_request(request)
       end
 
@@ -83,7 +86,21 @@ module Koine
       end
 
       def parse_response(response, &block)
-        @response_parser.parse(response, &block)
+        @response_parser.parse(response, &block).tap do |_resp|
+          @logger.log_response(response)
+        end
+      rescue StandardError => exception
+        @logger.log_error(exception)
+        raise exception
+      end
+
+      def log_response(response)
+        # This conditional is only this way because of mock responses in tests
+        if response.respond_to?(:code)
+          return @logger.debug("Response: #{response.code} - #{response.body}")
+        end
+
+        @logger.debug(response)
       end
     end
   end

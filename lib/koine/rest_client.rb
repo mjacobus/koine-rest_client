@@ -3,6 +3,7 @@
 require 'httparty'
 require 'koine/url'
 require 'koine/rest_client/errors'
+require 'koine/rest_client/logger'
 require 'koine/rest_client/version'
 require 'koine/rest_client/client'
 require 'koine/rest_client/async_builder'
@@ -14,5 +15,13 @@ require 'koine/rest_client/adapters/http_party_adapter'
 module Koine
   # The gem namespace
   module RestClient
+    # add logger config here
+    def self.logger=(logger)
+      @logger = logger
+    end
+
+    def self.logger
+      @logger ||= Logger.new(::Logger.new($stdout))
+    end
   end
 end
