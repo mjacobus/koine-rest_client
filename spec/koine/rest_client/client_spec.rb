@@ -9,9 +9,12 @@ RSpec.describe Koine::RestClient::Client do
     )
   end
 
-  let(:request) { instance_double(Koine::RestClient::Request) }
+  let(:request) { instance_double(Koine::RestClient::Request, debug_info: { request: :info }) }
   let(:response_parser) { instance_double(Koine::RestClient::ResponseParser) }
-  let(:response) { instance_double(HTTParty::Response, parsed_response: parsed_response) }
+  let(:response) do
+    instance_double(HTTParty::Response, parsed_response: parsed_response, code: 200,
+                                        body: 'the-body')
+  end
   let(:parsed_response) { 'the-response' }
   let(:adapter) { instance_double(Koine::RestClient::Adapters::HttpPartyAdapter) }
 
