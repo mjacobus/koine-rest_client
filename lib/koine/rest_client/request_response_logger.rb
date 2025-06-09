@@ -6,7 +6,7 @@ module Koine
   # The gem namespace
   module RestClient
     # Log requests, responses and errors
-    class Logger
+    class RequestResponseLogger
       def initialize(logger, log_level: ::Logger::INFO)
         @logger = logger.tap do |log|
           log.progname = 'Koine::RestClient'

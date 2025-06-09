@@ -3,7 +3,7 @@
 require 'httparty'
 require 'koine/url'
 require 'koine/rest_client/errors'
-require 'koine/rest_client/logger'
+require 'koine/rest_client/request_response_logger'
 require 'koine/rest_client/version'
 require 'koine/rest_client/client'
 require 'koine/rest_client/async_builder'
@@ -21,7 +21,15 @@ module Koine
     end
 
     def self.logger
-      @logger ||= Logger.new(::Logger.new($stdout))
+      @logger ||= ::Logger.new(nil)
+    end
+
+    def self.request_response_logger=(logger)
+      @request_response_logger = logger
+    end
+
+    def self.request_response_logger
+      @request_response_logger ||= RequestResponseLogger.new(logger)
     end
   end
 end
