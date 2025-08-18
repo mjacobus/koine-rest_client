@@ -19,8 +19,7 @@ module Koine
 
       def get(path, query = {}, options = {}, &block)
         request = create_get_request(path, query, options)
-        response = perform_request(request)
-        parse_response(response, &block)
+        perform_request(request, &block)
       end
 
       def create_get_request(path, query = {}, options = {})
@@ -29,8 +28,7 @@ module Koine
 
       def post(path, body = {}, options = {}, &block)
         request = create_post_request(path, body, options)
-        response = perform_request(request)
-        parse_response(response, &block)
+        perform_request(request, &block)
       end
 
       def create_post_request(path, body = {}, options = {})
@@ -39,8 +37,7 @@ module Koine
 
       def put(path, body = {}, options = {}, &block)
         request = create_put_request(path, body, options)
-        response = perform_request(request)
-        parse_response(response, &block)
+        perform_request(request, &block)
       end
 
       def create_put_request(path, body = {}, options = {})
@@ -49,8 +46,7 @@ module Koine
 
       def patch(path, body = {}, options = {}, &block)
         request = create_patch_request(path, body, options)
-        response = perform_request(request)
-        parse_response(response, &block)
+        perform_request(request, &block)
       end
 
       def create_patch_request(path, body = {}, options = {})
@@ -59,8 +55,7 @@ module Koine
 
       def delete(path, body = {}, options = {}, &block)
         request = create_delete_request(path, body, options)
-        response = perform_request(request)
-        parse_response(response, &block)
+        perform_request(request, &block)
       end
 
       def create_delete_request(path, body = {}, options = {})
@@ -73,9 +68,10 @@ module Koine
         builder.parsed_responses
       end
 
-      def perform_request(request)
+      def perform_request(request, &block)
         @logger.log_request(request)
-        @adapter.send_request(request)
+        response = @adapter.send_request(request)
+        parse_response(response, &block)
       end
 
       private
