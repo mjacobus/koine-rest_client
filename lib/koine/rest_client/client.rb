@@ -93,15 +93,6 @@ module Koine
         @logger.log_error(exception)
         raise exception
       end
-
-      def log_response(response)
-        # This conditional is only this way because of mock responses in tests
-        if response.respond_to?(:code)
-          return @logger.debug("Response: #{response.code} - #{response.body}")
-        end
-
-        @logger.debug(response)
-      end
     end
   end
 end
