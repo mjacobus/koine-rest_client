@@ -69,9 +69,12 @@ module Koine
       end
 
       def perform_request(request, &block)
+        parse_response(fetch_response(request), &block)
+      end
+
+      def fetch_response(request)
         @logger.log_request(request)
-        response = @adapter.send_request(request)
-        parse_response(response, &block)
+        @adapter.send_request(request)
       end
 
       private

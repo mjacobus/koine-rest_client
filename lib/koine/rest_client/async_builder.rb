@@ -36,7 +36,7 @@ module Koine
       def parsed_responses
         blocks = @queue.map { |_request, block| block }
         threads = @queue.map do |request|
-          Thread.new { @client.perform_request(request) }
+          Thread.new { @client.fetch_response(request) }
         end
         @queue.clear
         responses = threads.map(&:value)

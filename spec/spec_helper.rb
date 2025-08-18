@@ -82,4 +82,8 @@ class MockClient
   def perform_request(request)
     "requested-#{request}"
   end
+
+  def fetch_response(request)
+    "requested-#{request}"
+  end
 end
