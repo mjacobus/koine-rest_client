@@ -43,6 +43,12 @@ module Koine
         parse_responses(responses, blocks)
       end
 
+      def perform_requests(requests, &block)
+        requests.each do |request|
+          @queue.push(request, &block)
+        end
+      end
+
       def perform_request(request, &block)
         @queue.push(request, &block)
       end

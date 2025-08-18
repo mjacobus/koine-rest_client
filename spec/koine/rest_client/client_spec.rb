@@ -246,12 +246,12 @@ RSpec.describe Koine::RestClient::Client do
       it 'queues requests with block' do
         VCR.use_cassette('koine_rest_client_client_async') do
           values = []
+          requests = [
+            GithubUserRequest.new('mjacobus'),
+            GithubUserRequest.new('dhh'),
+          ]
           responses = client.async do |async|
-            async.perform_request(GithubUserRequest.new('mjacobus')) do |response|
-              values << response['login']
-            end
-
-            async.perform_request(GithubUserRequest.new('dhh')) do |response|
+            async.perform_requests(requests) do |response|
               values << response['login']
             end
           end
