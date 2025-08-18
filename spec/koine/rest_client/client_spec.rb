@@ -13,7 +13,7 @@ RSpec.describe Koine::RestClient::Client do
   let(:response_parser) { instance_double(Koine::RestClient::ResponseParser) }
   let(:response) do
     instance_double(HTTParty::Response, parsed_response: parsed_response, code: 200,
-                                        body: 'the-body')
+      body: 'the-body')
   end
   let(:parsed_response) { 'the-response' }
   let(:adapter) { instance_double(Koine::RestClient::Adapters::HttpPartyAdapter) }
@@ -180,30 +180,46 @@ RSpec.describe Koine::RestClient::Client do
   end
 
   describe '#async' do
-    let(:builder) { instance_double(Koine::RestClient::AsyncBuilder) }
-    let(:responses) do
-      client.async do |async|
-        async.get('foo')
+    context "mokies AsyncBuilder" do
+      let(:builder) { instance_double(Koine::RestClient::AsyncBuilder) }
+      let(:responses) do
+        client.async do |async|
+          async.get('foo')
+        end
+      end
+
+      before do
+        allow(Koine::RestClient::AsyncBuilder)
+          .to receive(:new)
+            .with(client, response_parser).and_return(builder)
+
+        allow(builder).to receive(:parsed_responses).and_return('responses')
+        allow(builder).to receive(:get)
+      end
+
+      it 'returns parsed responses' do
+        expect(responses).to eq('responses')
+      end
+
+      it 'yields builder' do
+        responses
+
+        expect(builder).to have_received(:get).with('foo')
       end
     end
 
-    before do
-      allow(Koine::RestClient::AsyncBuilder)
-        .to receive(:new)
-        .with(client, response_parser).and_return(builder)
+    context "with integration" do
+      let(:client) { Koine::RestClient::Client.new }
 
-      allow(builder).to receive(:parsed_responses).and_return('responses')
-      allow(builder).to receive(:get)
-    end
+      VCR.use_cassette('koine_rest_client_client_async') do
+        responses = client.async do |async|
+          async.add_request(GithubUserRequest.new("mjacobus"))
+          async.add_request(GithubUserRequest.new("dhh"))
+        end
 
-    it 'returns parsed responses' do
-      expect(responses).to eq('responses')
-    end
-
-    it 'yields builder' do
-      responses
-
-      expect(builder).to have_received(:get).with('foo')
+        expect(responses.first['login']).to eq('mjacobus')
+        expect(responses.last['login']).to eq('dhh')
+      end
     end
   end
 end
