@@ -43,6 +43,10 @@ module Koine
         parse_responses(responses, blocks)
       end
 
+      def perform_request(request, &block)
+        @queue.push(request, &block)
+      end
+
       def on_error(&block)
         @error_handler = block
       end

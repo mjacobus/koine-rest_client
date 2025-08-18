@@ -208,17 +208,19 @@ RSpec.describe Koine::RestClient::Client do
       end
     end
 
-    context "with integration" do
+    context 'with integration' do
       let(:client) { Koine::RestClient::Client.new }
 
-      VCR.use_cassette('koine_rest_client_client_async') do
-        responses = client.async do |async|
-          async.add_request(GithubUserRequest.new("mjacobus"))
-          async.add_request(GithubUserRequest.new("dhh"))
-        end
+      it 'queues requests' do
+        VCR.use_cassette('koine_rest_client_client_async') do
+          responses = client.async do |async|
+            async.perform_request(GithubUserRequest.new('mjacobus'))
+            async.perform_request(GithubUserRequest.new('dhh'))
+          end
 
-        expect(responses.first['login']).to eq('mjacobus')
-        expect(responses.last['login']).to eq('dhh')
+          expect(responses.first['login']).to eq('mjacobus')
+          expect(responses.last['login']).to eq('dhh')
+        end
       end
     end
   end

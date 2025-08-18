@@ -1,0 +1,155 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://api.github.com/users/mjacobus
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Mon, 18 Aug 2025 22:45:53 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Cache-Control:
+      - public, max-age=60, s-maxage=60
+      Vary:
+      - Accept,Accept-Encoding, Accept, X-Requested-With
+      Etag:
+      - W/"a20dd94279cc87d57f4a07f20192361bdf8126f922f10221be75b919f396ff30"
+      Last-Modified:
+      - Fri, 09 May 2025 21:58:46 GMT
+      X-Github-Media-Type:
+      - github.v3; format=json
+      X-Github-Api-Version-Selected:
+      - '2022-11-28'
+      Access-Control-Expose-Headers:
+      - ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining,
+        X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes,
+        X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO,
+        X-GitHub-Request-Id, Deprecation, Sunset
+      Access-Control-Allow-Origin:
+      - "*"
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubdomains; preload
+      X-Frame-Options:
+      - deny
+      X-Content-Type-Options:
+      - nosniff
+      X-Xss-Protection:
+      - '0'
+      Referrer-Policy:
+      - origin-when-cross-origin, strict-origin-when-cross-origin
+      Content-Security-Policy:
+      - default-src 'none'
+      Server:
+      - github.com
+      Accept-Ranges:
+      - bytes
+      X-Ratelimit-Limit:
+      - '60'
+      X-Ratelimit-Remaining:
+      - '51'
+      X-Ratelimit-Reset:
+      - '1755559470'
+      X-Ratelimit-Resource:
+      - core
+      X-Ratelimit-Used:
+      - '9'
+      Content-Length:
+      - '1264'
+      X-Github-Request-Id:
+      - 9A06:2BF117:9262A:A67D1:68A3AD21
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        eyJsb2dpbiI6Im1qYWNvYnVzIiwiaWQiOjIyNjgzNCwibm9kZV9pZCI6Ik1EUTZWWE5sY2pJeU5qZ3pOQT09IiwiYXZhdGFyX3VybCI6Imh0dHBzOi8vYXZhdGFycy5naXRodWJ1c2VyY29udGVudC5jb20vdS8yMjY4MzQ/dj00IiwiZ3JhdmF0YXJfaWQiOiIiLCJ1cmwiOiJodHRwczovL2FwaS5naXRodWIuY29tL3VzZXJzL21qYWNvYnVzIiwiaHRtbF91cmwiOiJodHRwczovL2dpdGh1Yi5jb20vbWphY29idXMiLCJmb2xsb3dlcnNfdXJsIjoiaHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS91c2Vycy9tamFjb2J1cy9mb2xsb3dlcnMiLCJmb2xsb3dpbmdfdXJsIjoiaHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS91c2Vycy9tamFjb2J1cy9mb2xsb3dpbmd7L290aGVyX3VzZXJ9IiwiZ2lzdHNfdXJsIjoiaHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS91c2Vycy9tamFjb2J1cy9naXN0c3svZ2lzdF9pZH0iLCJzdGFycmVkX3VybCI6Imh0dHBzOi8vYXBpLmdpdGh1Yi5jb20vdXNlcnMvbWphY29idXMvc3RhcnJlZHsvb3duZXJ9ey9yZXBvfSIsInN1YnNjcmlwdGlvbnNfdXJsIjoiaHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS91c2Vycy9tamFjb2J1cy9zdWJzY3JpcHRpb25zIiwib3JnYW5pemF0aW9uc191cmwiOiJodHRwczovL2FwaS5naXRodWIuY29tL3VzZXJzL21qYWNvYnVzL29yZ3MiLCJyZXBvc191cmwiOiJodHRwczovL2FwaS5naXRodWIuY29tL3VzZXJzL21qYWNvYnVzL3JlcG9zIiwiZXZlbnRzX3VybCI6Imh0dHBzOi8vYXBpLmdpdGh1Yi5jb20vdXNlcnMvbWphY29idXMvZXZlbnRzey9wcml2YWN5fSIsInJlY2VpdmVkX2V2ZW50c191cmwiOiJodHRwczovL2FwaS5naXRodWIuY29tL3VzZXJzL21qYWNvYnVzL3JlY2VpdmVkX2V2ZW50cyIsInR5cGUiOiJVc2VyIiwidXNlcl92aWV3X3R5cGUiOiJwdWJsaWMiLCJzaXRlX2FkbWluIjpmYWxzZSwibmFtZSI6Ik1hcmNlbG8gSmFjb2J1cyIsImNvbXBhbnkiOiJAV29ub2xvICIsImJsb2ciOiJodHRwOi8vbWphY29idXMuZ2l0aHViLmlvIiwibG9jYXRpb24iOiJFc3TDom5jaWEgVmVsaGEiLCJlbWFpbCI6bnVsbCwiaGlyZWFibGUiOnRydWUsImJpbyI6IkZvcm1lciBAZ2l0aHViLCBAeGluZy4iLCJ0d2l0dGVyX3VzZXJuYW1lIjpudWxsLCJwdWJsaWNfcmVwb3MiOjE3NCwicHVibGljX2dpc3RzIjo4MCwiZm9sbG93ZXJzIjoyMDUsImZvbGxvd2luZyI6MTU1LCJjcmVhdGVkX2F0IjoiMjAxMC0wMy0yMFQxNjoxMDozMVoiLCJ1cGRhdGVkX2F0IjoiMjAyNS0wNS0wOVQyMTo1ODo0NloifQ==
+  recorded_at: Mon, 18 Aug 2025 22:45:53 GMT
+- request:
+    method: get
+    uri: https://api.github.com/users/dhh
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Mon, 18 Aug 2025 22:45:53 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Cache-Control:
+      - public, max-age=60, s-maxage=60
+      Vary:
+      - Accept,Accept-Encoding, Accept, X-Requested-With
+      Etag:
+      - W/"d9617f35a0245adb3906b3c6d4094bec927be1d158c4789e0abf5acf5083ba97"
+      Last-Modified:
+      - Mon, 18 Aug 2025 14:20:38 GMT
+      X-Github-Media-Type:
+      - github.v3; format=json
+      X-Github-Api-Version-Selected:
+      - '2022-11-28'
+      Access-Control-Expose-Headers:
+      - ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining,
+        X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes,
+        X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO,
+        X-GitHub-Request-Id, Deprecation, Sunset
+      Access-Control-Allow-Origin:
+      - "*"
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubdomains; preload
+      X-Frame-Options:
+      - deny
+      X-Content-Type-Options:
+      - nosniff
+      X-Xss-Protection:
+      - '0'
+      Referrer-Policy:
+      - origin-when-cross-origin, strict-origin-when-cross-origin
+      Content-Security-Policy:
+      - default-src 'none'
+      Server:
+      - github.com
+      Accept-Ranges:
+      - bytes
+      X-Ratelimit-Limit:
+      - '60'
+      X-Ratelimit-Remaining:
+      - '52'
+      X-Ratelimit-Reset:
+      - '1755559470'
+      X-Ratelimit-Resource:
+      - core
+      X-Ratelimit-Used:
+      - '8'
+      Content-Length:
+      - '1161'
+      X-Github-Request-Id:
+      - 9A00:3DDC8E:9C5A2:B06FD:68A3AD21
+    body:
+      encoding: ASCII-8BIT
+      string: '{"login":"dhh","id":2741,"node_id":"MDQ6VXNlcjI3NDE=","avatar_url":"https://avatars.githubusercontent.com/u/2741?v=4","gravatar_id":"","url":"https://api.github.com/users/dhh","html_url":"https://github.com/dhh","followers_url":"https://api.github.com/users/dhh/followers","following_url":"https://api.github.com/users/dhh/following{/other_user}","gists_url":"https://api.github.com/users/dhh/gists{/gist_id}","starred_url":"https://api.github.com/users/dhh/starred{/owner}{/repo}","subscriptions_url":"https://api.github.com/users/dhh/subscriptions","organizations_url":"https://api.github.com/users/dhh/orgs","repos_url":"https://api.github.com/users/dhh/repos","events_url":"https://api.github.com/users/dhh/events{/privacy}","received_events_url":"https://api.github.com/users/dhh/received_events","type":"User","user_view_type":"public","site_admin":false,"name":"David
+        Heinemeier Hansson","company":"37signals","blog":"https://dhh.dk","location":null,"email":null,"hireable":null,"bio":null,"twitter_username":"dhh","public_repos":4,"public_gists":55,"followers":21804,"following":0,"created_at":"2008-03-10T17:53:51Z","updated_at":"2025-08-18T14:20:38Z"}'
+  recorded_at: Mon, 18 Aug 2025 22:45:53 GMT
+recorded_with: VCR 6.3.1
