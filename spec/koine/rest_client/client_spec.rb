@@ -53,6 +53,26 @@ RSpec.describe Koine::RestClient::Client do
         expect(storage).to eq(['yield-value'])
       end
     end
+
+    context "with vcr" do
+      let(:base_request) { Koine::RestClient::Request.new(base_url: 'https://api.github.com') }
+      let(:client) { Koine::RestClient::Client.new(base_request: base_request) }
+
+      it "makes requests" do
+        VCR.use_cassette('koine_rest_client_client_get') do
+          response = client.get('/users/mjacobus')
+          expect(response['login']).to eq('mjacobus')
+        end
+      end
+
+      it "takes a block" do
+        VCR.use_cassette('koine_rest_client_client_get') do
+          client.get('/users/mjacobus') do |response|
+            expect(response['login']).to eq('mjacobus')
+          end
+        end
+      end
+    end
   end
 
   describe '#post' do
@@ -220,6 +240,24 @@ RSpec.describe Koine::RestClient::Client do
 
           expect(responses.first['login']).to eq('mjacobus')
           expect(responses.last['login']).to eq('dhh')
+        end
+      end
+
+      it 'queues requests with block' do
+        VCR.use_cassette('koine_rest_client_client_async') do
+          values = []
+          responses = client.async do |async|
+            async.perform_request(GithubUserRequest.new('mjacobus')) do |response|
+              values << response['login']
+            end
+
+            async.perform_request(GithubUserRequest.new('dhh')) do |response|
+              values << response['login']
+            end
+          end
+
+          expect(responses.map { |r| r['login']}).to eq(['mjacobus', 'dhh'])
+          expect(values).to eq(['mjacobus', 'dhh'])
         end
       end
     end
