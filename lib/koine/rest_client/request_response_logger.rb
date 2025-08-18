@@ -23,8 +23,11 @@ module Koine
       end
 
       def log_error(error)
-        if error.respond_to?(:code) && error.respond_to?(:message)
-          return @logger.error("Response: #{response.code} #{response.message} - #{response.body}")
+        if error.respond_to?(:response)
+          response = error.response
+          if response.respond_to?(:code) && response.respond_to?(:body)
+            return @logger.error("Response: #{response.code} #{error.message} - #{response.body}")
+          end
         end
 
         @logger.error("Error: #{error.class} - #{error.message}")
