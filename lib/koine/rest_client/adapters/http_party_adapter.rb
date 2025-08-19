@@ -7,12 +7,17 @@ module Koine
     module Adapters
       # adapter for HTTParty client
       class HttpPartyAdapter
-        def initialize(http_party_client = HTTParty)
+        def initialize(http_party_client = HTTParty, response_parser: ResponseParser.new)
           @client = http_party_client
+          @response_parser = response_parser
         end
 
         def send_request(request)
           send("send_#{request.method}", request)
+        end
+
+        def parse_response(response, request:, &block)
+          @response_parser.parse(response, request: request, &block)
         end
 
         private

@@ -7,12 +7,10 @@ module Koine
     class Client
       def initialize(
         adapter: Adapters::HttpPartyAdapter.new,
-        response_parser: ResponseParser.new,
         base_request: Request.new,
         request_response_logger: RestClient.request_response_logger
       )
         @adapter = adapter
-        @response_parser = response_parser
         @request = base_request
         @logger = request_response_logger
       end
@@ -63,7 +61,7 @@ module Koine
       end
 
       def async
-        builder = AsyncBuilder.new(self, @response_parser)
+        builder = AsyncBuilder.new(self, @adapter)
         yield(builder)
         builder.parsed_responses
       end
@@ -85,7 +83,7 @@ module Koine
       end
 
       def parse_response(response, request:, &block)
-        @response_parser.parse(response, request:, &block).tap do |_resp|
+        @adapter.parse_response(response, request:, &block).tap do |_resp|
           @logger.log_response(response)
         end
       rescue StandardError => exception

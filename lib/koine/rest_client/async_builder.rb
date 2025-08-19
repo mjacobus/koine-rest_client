@@ -4,9 +4,9 @@ module Koine
   module RestClient
     # takes care of async requests
     class AsyncBuilder
-      def initialize(client, response_parser, queue = AsyncQueue.new)
+      def initialize(client, adapter, queue = AsyncQueue.new)
         @client = client
-        @response_parser = response_parser
+        @adapter = adapter
         @queue = queue
         @error_handler = proc do |error|
           raise error
@@ -34,13 +34,12 @@ module Koine
       end
 
       def parsed_responses
-        blocks = @queue.map { |_request, block| block }
-        threads = @queue.map do |request|
-          Thread.new { [request, @client.fetch_response(request)] }
+        threads = @queue.map do |request, block|
+          Thread.new { [request, @adapter.send_request(request), block] }
         end
         @queue.clear
         responses = threads.map(&:value)
-        parse_responses(responses, blocks)
+        parse_responses(responses)
       end
 
       def perform_requests(requests, &block)
@@ -59,11 +58,10 @@ module Koine
 
       private
 
-      def parse_responses(responses, blocks)
-        responses.map.with_index do |(request, response), index|
-          block = blocks[index]
+      def parse_responses(responses)
+        responses.map.with_index do |(request, response, block), index|
           begin
-            @response_parser.parse(response, request:, &block)
+            @adapter.parse_response(response, request:, &block)
           rescue StandardError => exception
             @error_handler.call(exception)
           end

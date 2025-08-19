@@ -4,13 +4,11 @@ RSpec.describe Koine::RestClient::Client do
   subject(:client) do
     described_class.new(
       adapter: adapter,
-      response_parser: response_parser,
       base_request: request
     )
   end
 
   let(:request) { instance_double(Koine::RestClient::Request, debug_info: { request: :info }) }
-  let(:response_parser) { instance_double(Koine::RestClient::ResponseParser) }
   let(:response) do
     instance_double(HTTParty::Response, parsed_response: parsed_response, code: 200,
       body: 'the-body')
@@ -21,7 +19,7 @@ RSpec.describe Koine::RestClient::Client do
   before do
     allow(request).to receive(:with_added_options).and_return(request)
     allow(adapter).to receive(:send_request).and_return(response)
-    allow(response_parser).to receive(:parse).with(response, request: request).and_return(parsed_response)
+    allow(adapter).to receive(:parse_response).with(response, request: request).and_return(parsed_response)
   end
 
   describe '#get' do
@@ -40,7 +38,7 @@ RSpec.describe Koine::RestClient::Client do
 
     context 'when block given' do
       before do
-        allow(response_parser).to receive(:parse).and_yield('yield-value')
+        allow(adapter).to receive(:parse_response).and_yield('yield-value')
       end
 
       it 'forwards block to response parser' do
@@ -91,7 +89,7 @@ RSpec.describe Koine::RestClient::Client do
 
     context 'when block given' do
       before do
-        allow(response_parser).to receive(:parse).and_yield('yield-value')
+        allow(adapter).to receive(:parse_response).and_yield('yield-value')
       end
 
       it 'forwards block to response parser' do
@@ -122,7 +120,7 @@ RSpec.describe Koine::RestClient::Client do
 
     context 'when block given' do
       before do
-        allow(response_parser).to receive(:parse).and_yield('yield-value')
+        allow(adapter).to receive(:parse_response).and_yield('yield-value')
       end
 
       it 'forwards block to response parser' do
@@ -153,7 +151,7 @@ RSpec.describe Koine::RestClient::Client do
 
     context 'when block given' do
       before do
-        allow(response_parser).to receive(:parse).and_yield('yield-value')
+        allow(adapter).to receive(:parse_response).and_yield('yield-value')
       end
 
       it 'forwards block to response parser' do
@@ -184,7 +182,7 @@ RSpec.describe Koine::RestClient::Client do
 
     context 'when block given' do
       before do
-        allow(response_parser).to receive(:parse).and_yield('yield-value')
+        allow(adapter).to receive(:parse_response).and_yield('yield-value')
       end
 
       it 'forwards block to response parser' do
@@ -211,7 +209,7 @@ RSpec.describe Koine::RestClient::Client do
       before do
         allow(Koine::RestClient::AsyncBuilder)
           .to receive(:new)
-            .with(client, response_parser).and_return(builder)
+            .with(client, adapter).and_return(builder)
 
         allow(builder).to receive(:parsed_responses).and_return('responses')
         allow(builder).to receive(:get)
@@ -240,6 +238,25 @@ RSpec.describe Koine::RestClient::Client do
 
           expect(responses.first['login']).to eq('mjacobus')
           expect(responses.last['login']).to eq('dhh')
+        end
+      end
+
+      it 'queues individual requests with individual blocks' do
+        VCR.use_cassette('koine_rest_client_client_async') do
+          values = []
+          responses = client.async do |async|
+            async.perform_request(GithubUserRequest.new('mjacobus')) do |response|
+              values << response['login']
+            end
+
+            async.perform_request(GithubUserRequest.new('dhh')) do |response|
+              values << response['login']
+            end
+          end
+
+          expect(responses.first['login']).to eq('mjacobus')
+          expect(responses.last['login']).to eq('dhh')
+          expect(values).to eq(['mjacobus', 'dhh'])
         end
       end
 
