@@ -7,34 +7,53 @@ module Koine
     module Adapters
       # adapter for HTTParty client
       class HttpPartyAdapter
-        def initialize(http_party_client = HTTParty)
+        def initialize(http_party_client = HTTParty, response_parser: ResponseParser.new, logger: RestClient.request_response_logger)
           @client = http_party_client
+          @response_parser = response_parser
+          @logger = logger
         end
 
         def send_request(request)
+          @logger.log_request(request)
           send("send_#{request.method}", request)
+        end
+
+        def parse_response(response, request:, &block)
+          @response_parser.parse(response, request: request, &block).tap do
+            @logger.log_response(response)
+          end
+        rescue StandardError => exception
+          @logger.log_error(exception)
+
+          raise exception
         end
 
         private
 
         def send_post(request)
-          @client.post(request.url, request.options)
+          @client.post(request.url, options_for(request))
         end
 
         def send_get(request)
-          @client.get(request.url, request.options)
+          @client.get(request.url, options_for(request))
         end
 
         def send_put(request)
-          @client.put(request.url, request.options)
+          @client.put(request.url, options_for(request))
         end
 
         def send_patch(request)
-          @client.patch(request.url, request.options)
+          @client.patch(request.url, options_for(request))
         end
 
         def send_delete(request)
-          @client.delete(request.url, request.options)
+          @client.delete(request.url, options_for(request))
+        end
+
+        def options_for(request)
+          { body: request.body, headers: request.headers }.compact.reject do |_key, value|
+            value.empty?
+          end
         end
       end
     end

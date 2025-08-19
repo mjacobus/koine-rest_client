@@ -96,39 +96,6 @@ RSpec.describe Koine::RestClient::Request do
     end
   end
 
-  describe '#options' do
-    it 'does not include method' do
-      expect(request.options.key?(:method)).to be false
-    end
-
-    it 'does not include path' do
-      expect(request.options.key?(:path)).to be false
-    end
-
-    it 'does not include base url' do
-      expect(request.options.key?(:base_url)).to be false
-    end
-
-    it 'ommits body when it is empty' do
-      expect(request.options.key?(:body)).to be false
-    end
-
-    it 'includes body when it is given' do
-      new_request = request.with_body('the-body')
-      expect(new_request.options[:body]).to eq 'the-body'
-    end
-
-    it 'includes headers' do
-      expect(request.options[:headers]).to eq(h1: :v1)
-    end
-
-    it 'ommit headers when empty' do
-      request = described_class.new
-
-      expect(request.options.key?(:headers)).to be false
-    end
-  end
-
   describe '#with_added_options' do
     it 'adds all options' do
       new_request = request.with_added_options(

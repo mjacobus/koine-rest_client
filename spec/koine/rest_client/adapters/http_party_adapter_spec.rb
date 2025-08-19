@@ -11,7 +11,8 @@ RSpec.describe Koine::RestClient::Adapters::HttpPartyAdapter do
       Koine::RestClient::Request,
       url: 'the-url',
       method: request_method,
-      options: 'the-options'
+      headers: 'the-headers',
+      body: 'the-body',
     )
   end
 
@@ -26,7 +27,7 @@ RSpec.describe Koine::RestClient::Adapters::HttpPartyAdapter do
       it 'handles request' do
         adapter.send_request(request)
 
-        expect(client).to have_received(method).with('the-url', 'the-options')
+        expect(client).to have_received(method).with('the-url', {body: 'the-body', headers: 'the-headers'})
       end
     end
   end

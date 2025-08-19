@@ -7,20 +7,15 @@ module Koine
     class Client
       def initialize(
         adapter: Adapters::HttpPartyAdapter.new,
-        response_parser: ResponseParser.new,
-        base_request: Request.new,
-        request_response_logger: RestClient.request_response_logger
+        base_request: Request.new
       )
         @adapter = adapter
-        @response_parser = response_parser
         @request = base_request
-        @logger = request_response_logger
       end
 
       def get(path, query = {}, options = {}, &block)
         request = create_get_request(path, query, options)
-        response = perform_request(request)
-        parse_response(response, &block)
+        perform_request(request, &block)
       end
 
       def create_get_request(path, query = {}, options = {})
@@ -29,8 +24,7 @@ module Koine
 
       def post(path, body = {}, options = {}, &block)
         request = create_post_request(path, body, options)
-        response = perform_request(request)
-        parse_response(response, &block)
+        perform_request(request, &block)
       end
 
       def create_post_request(path, body = {}, options = {})
@@ -39,8 +33,7 @@ module Koine
 
       def put(path, body = {}, options = {}, &block)
         request = create_put_request(path, body, options)
-        response = perform_request(request)
-        parse_response(response, &block)
+        perform_request(request, &block)
       end
 
       def create_put_request(path, body = {}, options = {})
@@ -49,8 +42,7 @@ module Koine
 
       def patch(path, body = {}, options = {}, &block)
         request = create_patch_request(path, body, options)
-        response = perform_request(request)
-        parse_response(response, &block)
+        perform_request(request, &block)
       end
 
       def create_patch_request(path, body = {}, options = {})
@@ -59,8 +51,7 @@ module Koine
 
       def delete(path, body = {}, options = {}, &block)
         request = create_delete_request(path, body, options)
-        response = perform_request(request)
-        parse_response(response, &block)
+        perform_request(request, &block)
       end
 
       def create_delete_request(path, body = {}, options = {})
@@ -68,13 +59,16 @@ module Koine
       end
 
       def async
-        builder = AsyncBuilder.new(self, @response_parser)
+        builder = AsyncBuilder.new(self, @adapter)
         yield(builder)
         builder.parsed_responses
       end
 
-      def perform_request(request)
-        @logger.log_request(request)
+      def perform_request(request, &block)
+        parse_response(fetch_response(request), request:, &block)
+      end
+
+      def fetch_response(request)
         @adapter.send_request(request)
       end
 
@@ -85,13 +79,8 @@ module Koine
         @request.with_added_options(options)
       end
 
-      def parse_response(response, &block)
-        @response_parser.parse(response, &block).tap do |_resp|
-          @logger.log_response(response)
-        end
-      rescue StandardError => exception
-        @logger.log_error(exception)
-        raise exception
+      def parse_response(response, request:, &block)
+        @adapter.parse_response(response, request:, &block)
       end
     end
   end

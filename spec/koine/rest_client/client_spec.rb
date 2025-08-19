@@ -4,16 +4,14 @@ RSpec.describe Koine::RestClient::Client do
   subject(:client) do
     described_class.new(
       adapter: adapter,
-      response_parser: response_parser,
       base_request: request
     )
   end
 
   let(:request) { instance_double(Koine::RestClient::Request, debug_info: { request: :info }) }
-  let(:response_parser) { instance_double(Koine::RestClient::ResponseParser) }
   let(:response) do
     instance_double(HTTParty::Response, parsed_response: parsed_response, code: 200,
-                                        body: 'the-body')
+      body: 'the-body')
   end
   let(:parsed_response) { 'the-response' }
   let(:adapter) { instance_double(Koine::RestClient::Adapters::HttpPartyAdapter) }
@@ -21,7 +19,7 @@ RSpec.describe Koine::RestClient::Client do
   before do
     allow(request).to receive(:with_added_options).and_return(request)
     allow(adapter).to receive(:send_request).and_return(response)
-    allow(response_parser).to receive(:parse).with(response).and_return(parsed_response)
+    allow(adapter).to receive(:parse_response).with(response, request: request).and_return(parsed_response)
   end
 
   describe '#get' do
@@ -40,7 +38,7 @@ RSpec.describe Koine::RestClient::Client do
 
     context 'when block given' do
       before do
-        allow(response_parser).to receive(:parse).and_yield('yield-value')
+        allow(adapter).to receive(:parse_response).and_yield('yield-value')
       end
 
       it 'forwards block to response parser' do
@@ -51,6 +49,26 @@ RSpec.describe Koine::RestClient::Client do
         end
 
         expect(storage).to eq(['yield-value'])
+      end
+    end
+
+    context "with vcr" do
+      let(:base_request) { Koine::RestClient::Request.new(base_url: 'https://api.github.com') }
+      let(:client) { Koine::RestClient::Client.new(base_request: base_request) }
+
+      it "makes requests" do
+        VCR.use_cassette('koine_rest_client_client_get') do
+          response = client.get('/users/mjacobus')
+          expect(response['login']).to eq('mjacobus')
+        end
+      end
+
+      it "takes a block" do
+        VCR.use_cassette('koine_rest_client_client_get') do
+          client.get('/users/mjacobus') do |response|
+            expect(response['login']).to eq('mjacobus')
+          end
+        end
       end
     end
   end
@@ -71,7 +89,7 @@ RSpec.describe Koine::RestClient::Client do
 
     context 'when block given' do
       before do
-        allow(response_parser).to receive(:parse).and_yield('yield-value')
+        allow(adapter).to receive(:parse_response).and_yield('yield-value')
       end
 
       it 'forwards block to response parser' do
@@ -102,7 +120,7 @@ RSpec.describe Koine::RestClient::Client do
 
     context 'when block given' do
       before do
-        allow(response_parser).to receive(:parse).and_yield('yield-value')
+        allow(adapter).to receive(:parse_response).and_yield('yield-value')
       end
 
       it 'forwards block to response parser' do
@@ -133,7 +151,7 @@ RSpec.describe Koine::RestClient::Client do
 
     context 'when block given' do
       before do
-        allow(response_parser).to receive(:parse).and_yield('yield-value')
+        allow(adapter).to receive(:parse_response).and_yield('yield-value')
       end
 
       it 'forwards block to response parser' do
@@ -164,7 +182,7 @@ RSpec.describe Koine::RestClient::Client do
 
     context 'when block given' do
       before do
-        allow(response_parser).to receive(:parse).and_yield('yield-value')
+        allow(adapter).to receive(:parse_response).and_yield('yield-value')
       end
 
       it 'forwards block to response parser' do
@@ -180,30 +198,85 @@ RSpec.describe Koine::RestClient::Client do
   end
 
   describe '#async' do
-    let(:builder) { instance_double(Koine::RestClient::AsyncBuilder) }
-    let(:responses) do
-      client.async do |async|
-        async.get('foo')
+    context "mokies AsyncBuilder" do
+      let(:builder) { instance_double(Koine::RestClient::AsyncBuilder) }
+      let(:responses) do
+        client.async do |async|
+          async.get('foo')
+        end
+      end
+
+      before do
+        allow(Koine::RestClient::AsyncBuilder)
+          .to receive(:new)
+            .with(client, adapter).and_return(builder)
+
+        allow(builder).to receive(:parsed_responses).and_return('responses')
+        allow(builder).to receive(:get)
+      end
+
+      it 'returns parsed responses' do
+        expect(responses).to eq('responses')
+      end
+
+      it 'yields builder' do
+        responses
+
+        expect(builder).to have_received(:get).with('foo')
       end
     end
 
-    before do
-      allow(Koine::RestClient::AsyncBuilder)
-        .to receive(:new)
-        .with(client, response_parser).and_return(builder)
+    context 'with integration' do
+      let(:client) { Koine::RestClient::Client.new }
 
-      allow(builder).to receive(:parsed_responses).and_return('responses')
-      allow(builder).to receive(:get)
-    end
+      it 'queues requests' do
+        VCR.use_cassette('koine_rest_client_client_async') do
+          responses = client.async do |async|
+            async.perform_request(GithubUserRequest.new('mjacobus'))
+            async.perform_request(GithubUserRequest.new('dhh'))
+          end
 
-    it 'returns parsed responses' do
-      expect(responses).to eq('responses')
-    end
+          expect(responses.first['login']).to eq('mjacobus')
+          expect(responses.last['login']).to eq('dhh')
+        end
+      end
 
-    it 'yields builder' do
-      responses
+      it 'queues individual requests with individual blocks' do
+        VCR.use_cassette('koine_rest_client_client_async') do
+          values = []
+          responses = client.async do |async|
+            async.perform_request(GithubUserRequest.new('mjacobus')) do |response|
+              values << response['login']
+            end
 
-      expect(builder).to have_received(:get).with('foo')
+            async.perform_request(GithubUserRequest.new('dhh')) do |response|
+              values << response['login']
+            end
+          end
+
+          expect(responses.first['login']).to eq('mjacobus')
+          expect(responses.last['login']).to eq('dhh')
+          expect(values).to eq(['mjacobus', 'dhh'])
+        end
+      end
+
+      it 'queues requests with block' do
+        VCR.use_cassette('koine_rest_client_client_async') do
+          values = []
+          requests = [
+            GithubUserRequest.new('mjacobus'),
+            GithubUserRequest.new('dhh'),
+          ]
+          responses = client.async do |async|
+            async.perform_requests(requests) do |response|
+              values << response['login']
+            end
+          end
+
+          expect(responses.map { |r| r['login']}).to eq(['mjacobus', 'dhh'])
+          expect(values).to eq(['mjacobus', 'dhh'])
+        end
+      end
     end
   end
 end

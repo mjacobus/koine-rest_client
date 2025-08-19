@@ -23,6 +23,7 @@ require 'bundler/setup'
 require 'koine/rest_client'
 require 'object_comparator/rspec'
 require 'tempfile'
+require 'vcr'
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
@@ -82,4 +83,39 @@ class MockClient
   def perform_request(request)
     "requested-#{request}"
   end
+
+  def fetch_response(request)
+    "requested-#{request}"
+  end
+end
+
+class GithubUserRequest
+  def initialize(username)
+    @username = username
+  end
+
+  def url
+    "https://api.github.com/users/#{@username}"
+  end
+
+  def method
+    :get
+  end
+
+  def body
+    nil
+  end
+
+  def headers
+    nil
+  end
+
+  def options
+    { method: method }
+  end
+end
+
+VCR.configure do |config|
+  config.cassette_library_dir = 'spec/fixtures/vcr_cassettes'
+  config.hook_into :webmock
 end

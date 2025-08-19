@@ -3,7 +3,8 @@
 RSpec.describe Koine::RestClient::ResponseParser do
   subject(:parser) { described_class.new }
 
-  let(:parsed) { parser.parse(response) }
+  let(:request) { instance_double(Koine::RestClient::Request, debug_info: { request: :info }) }
+  let(:parsed) { parser.parse(response, request:) }
   let(:response) do
     instance_double(
       HTTParty::Response,
@@ -35,7 +36,7 @@ RSpec.describe Koine::RestClient::ResponseParser do
   it 'yields block' do
     storage = []
 
-    parser.parse(response) do |r|
+    parser.parse(response, request:) do |r|
       storage << r
     end
 

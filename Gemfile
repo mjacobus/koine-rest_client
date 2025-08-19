@@ -16,3 +16,5 @@ gem 'rubocop-performance'
 gem 'rubocop-rspec'
 gem 'simplecov', require: false
 gem 'simplecov-lcov', require: false
+gem 'vcr'
+gem 'webmock'

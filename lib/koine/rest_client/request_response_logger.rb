@@ -15,7 +15,9 @@ module Koine
       end
 
       def log_request(request)
-        @logger.info(request.debug_info)
+        if request.respond_to?(:debug_info)
+          @logger.info(request.debug_info)
+        end
       end
 
       def log_response(response)
