@@ -19,11 +19,13 @@ module Koine
           return response.parsed_response
         end
 
+        error = error_for_code(code).new(response)
+
         if request.respond_to?(:on_error)
-          return request.on_error(response)
+          return request.on_error(error)
         end
 
-        raise error_for_code(code), response
+        raise error
       end
 
       private
