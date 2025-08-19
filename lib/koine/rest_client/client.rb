@@ -7,12 +7,10 @@ module Koine
     class Client
       def initialize(
         adapter: Adapters::HttpPartyAdapter.new,
-        base_request: Request.new,
-        request_response_logger: RestClient.request_response_logger
+        base_request: Request.new
       )
         @adapter = adapter
         @request = base_request
-        @logger = request_response_logger
       end
 
       def get(path, query = {}, options = {}, &block)
@@ -71,7 +69,6 @@ module Koine
       end
 
       def fetch_response(request)
-        @logger.log_request(request)
         @adapter.send_request(request)
       end
 
@@ -83,12 +80,7 @@ module Koine
       end
 
       def parse_response(response, request:, &block)
-        @adapter.parse_response(response, request:, &block).tap do |_resp|
-          @logger.log_response(response)
-        end
-      rescue StandardError => exception
-        @logger.log_error(exception)
-        raise exception
+        @adapter.parse_response(response, request:, &block)
       end
     end
   end
