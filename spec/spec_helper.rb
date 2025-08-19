@@ -102,6 +102,14 @@ class GithubUserRequest
     :get
   end
 
+  def body
+    nil
+  end
+
+  def headers
+    nil
+  end
+
   def options
     { method: method }
   end

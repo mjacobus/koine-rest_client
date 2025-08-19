@@ -44,11 +44,11 @@ module Koine
         Url.new(url).with_query_params(query_params).to_s(unescape: ',')
       end
 
-      def options
-        { body: body, headers: headers }.compact.reject do |_key, value|
-          value.empty?
-        end
-      end
+      # def options
+      #   { body: body, headers: headers }.compact.reject do |_key, value|
+      #     value.empty?
+      #   end
+      # end
 
       # :reek:ManualDispatch
       def with_added_options(options)

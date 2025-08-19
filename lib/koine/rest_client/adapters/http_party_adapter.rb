@@ -18,23 +18,29 @@ module Koine
         private
 
         def send_post(request)
-          @client.post(request.url, request.options)
+          @client.post(request.url, options_for(request))
         end
 
         def send_get(request)
-          @client.get(request.url, request.options)
+          @client.get(request.url, options_for(request))
         end
 
         def send_put(request)
-          @client.put(request.url, request.options)
+          @client.put(request.url, options_for(request))
         end
 
         def send_patch(request)
-          @client.patch(request.url, request.options)
+          @client.patch(request.url, options_for(request))
         end
 
         def send_delete(request)
-          @client.delete(request.url, request.options)
+          @client.delete(request.url, options_for(request))
+        end
+
+        def options_for(request)
+          { body: request.body, headers: request.headers }.compact.reject do |_key, value|
+            value.empty?
+          end
         end
       end
     end
