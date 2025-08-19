@@ -36,7 +36,7 @@ module Koine
       def parsed_responses
         blocks = @queue.map { |_request, block| block }
         threads = @queue.map do |request|
-          Thread.new { @client.fetch_response(request) }
+          Thread.new { [request, @client.fetch_response(request)] }
         end
         @queue.clear
         responses = threads.map(&:value)
@@ -60,10 +60,10 @@ module Koine
       private
 
       def parse_responses(responses, blocks)
-        responses.map.with_index do |response, index|
+        responses.map.with_index do |(request, response), index|
           block = blocks[index]
           begin
-            @response_parser.parse(response, &block)
+            @response_parser.parse(response, request:, &block)
           rescue StandardError => exception
             @error_handler.call(exception)
           end

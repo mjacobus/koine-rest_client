@@ -69,7 +69,7 @@ module Koine
       end
 
       def perform_request(request, &block)
-        parse_response(fetch_response(request), &block)
+        parse_response(fetch_response(request), request:, &block)
       end
 
       def fetch_response(request)
@@ -84,8 +84,8 @@ module Koine
         @request.with_added_options(options)
       end
 
-      def parse_response(response, &block)
-        @response_parser.parse(response, &block).tap do |_resp|
+      def parse_response(response, request:, &block)
+        @response_parser.parse(response, request:, &block).tap do |_resp|
           @logger.log_response(response)
         end
       rescue StandardError => exception

@@ -21,7 +21,7 @@ RSpec.describe Koine::RestClient::Client do
   before do
     allow(request).to receive(:with_added_options).and_return(request)
     allow(adapter).to receive(:send_request).and_return(response)
-    allow(response_parser).to receive(:parse).with(response).and_return(parsed_response)
+    allow(response_parser).to receive(:parse).with(response, request: request).and_return(parsed_response)
   end
 
   describe '#get' do

@@ -4,7 +4,7 @@ module Koine
   module RestClient
     # either returns response or raises errors
     class ResponseParser
-      def parse(response)
+      def parse(response, request:)
         if block_given?
           yield(response)
         end
@@ -12,7 +12,15 @@ module Koine
         code = Integer(response.code)
 
         if code.between?(200, 299)
+          if request.respond_to?(:on_success)
+            request.on_success(response)
+          end
+
           return response.parsed_response
+        end
+
+        if request.respond_to?(:on_error)
+          return request.on_error(response)
         end
 
         raise error_for_code(code), response

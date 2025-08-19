@@ -56,8 +56,8 @@ module Koine
 
       private
 
-      def parse(response, &block)
-        @response_parser.parse(response, &block).tap do |_parsed|
+      def parse(response, request: nil, &block)
+        @response_parser.parse(response, request:, &block).tap do |_parsed|
           if @async
             @collected << response
           end
